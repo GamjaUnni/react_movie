@@ -1,40 +1,54 @@
-import { useState, useEffect } from "react";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import Home from "./routes/Home";
+// import Detail from "./routes/Detail";
+import { useState } from "react";
 
 function App() {
-    const [loading, setLoading] = useState(true);
-    const [movies, setMovies] = useState([]);
-    const getMovies = async () => {
-        const response = await fetch(
-            `https://yts.mx/api/v2/list_movies.json?minimum_rating=9&sort_by=year`
-        );
-        const json = await response.json();
-        setMovies(json.data.movies);
-        setLoading(false);
+    const [toDo, setTodo] = useState("");
+    const [toDos, setToDos] = useState([]);
+    const onChange = (e) => {
+        setTodo(e.target.value);
     };
-    useEffect(() => {
-        getMovies();
-    }, []);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        if (toDo === "") return;
+        setToDos((currentArray) => [toDo, ...currentArray]);
+        setTodo("");
+    };
+
+    const onClick = (i) => {
+        console.log(i);
+        setToDos(toDos.filter((v, idx) => idx !== i));
+    };
     return (
         <div>
-            {loading ? (
-                <h1>Loading...</h1>
-            ) : (
-                <div>
-                    {movies.map((movie) => (
-                        <div key={movie.id}>
-                            <img src={movie.medium_cover_image} />
-                            <h2>{movie.title}</h2>
-                            <p>{movie.summary}</p>
-                            <ul>
-                                {movie.genres.map((g) => (
-                                    <li key={g}>{g}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                </div>
-            )}
+            <h1>My To Dos({toDos.length})</h1>
+            <form onSubmit={onSubmit}>
+                <input
+                    type="test"
+                    value={toDo}
+                    onChange={onChange}
+                    placeholder="write here!"
+                />
+                <button>add</button>
+            </form>
+            <ul>
+                {toDos.map((v, i) => (
+                    <li key={i}>
+                        {v}
+                        <button onClick={() => onClick(i)}>X</button>
+                    </li>
+                ))}
+            </ul>
         </div>
+
+        // <Router>
+        //     <Routes>
+        //         <Route path="/movie/:id" element={<Detail />}></Route>
+        //         <Route path="/" element={<Home />}></Route>
+        //     </Routes>
+        // </Router>
     );
 }
 
