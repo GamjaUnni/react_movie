@@ -1,40 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const App = () => {
-    const [value, setValue] = useState("");
-    const [todo, setTodo] = useState([]);
-    const onChange = (e) => {
-        setValue(e.target.value);
-    };
-    const onSubmit = (e) => {
-        e.preventDefault();
-        if (value === "") {
-            return;
-        }
-        setTodo((curr) => [value, ...curr]);
-        setValue("");
-    };
-    const onclick = (i) => {
-        setTodo(todo.filter((v, idx) => idx !== i));
-    };
+    const [loading, setLoading] = useState(true);
+    const [coins, setCoins] = useState([]);
+    useEffect(() => {
+        fetch("https://api.coinpaprika.com/v1/tickers")
+            .then((response) => response.json())
+            .then((json) => {
+                setCoins(json);
+                setLoading(false);
+            });
+    }, []);
     return (
         <div>
-            <h1>to do list</h1>
-            <form onSubmit={onSubmit}>
-                <input
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    placeholder="할일을 입력하세요"
-                />
-                <button>add</button>
-            </form>
+            <h1>The Coins!({coins.length})</h1>
+            {loading ? <strong>Loading...</strong> : null}
             <ul>
-                {todo.map((v, i) => (
-                    <li key={i}>
-                        {v}
-                        <button onClick={() => onclick(i)}>X</button>
-                    </li>
+                {coins.map((v, i) => (
+                    <li key={v.id}>{v.name} (v.symbol)</li>
                 ))}
             </ul>
         </div>
