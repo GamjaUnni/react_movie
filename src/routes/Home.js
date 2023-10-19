@@ -28,6 +28,7 @@ const Home = () => {
                     {movies.map((v) => (
                         <Movie
                             key={v.id}
+                            id={v.id}
                             coverImg={v.medium_cover_image}
                             title={v.title}
                             summary={v.summary}
